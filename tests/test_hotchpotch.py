@@ -2,14 +2,17 @@
 Extensive test suite for hotchpotch.
 Run with: pytest test_hotchpotch.py -v
 """
+
 import pytest
 import hotchpotch as hp
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def cfg():
     return hp.FormatConfig()
+
 
 def roundtrip(obj, cfg):
     """Serialize then deserialize, assert equality."""
@@ -18,7 +21,9 @@ def roundtrip(obj, cfg):
     assert result == obj, f"\nInput:    {obj}\nEncoded:  {s}\nDecoded:  {result}"
     return s
 
+
 # ── Scalar types ──────────────────────────────────────────────────────────────
+
 
 class TestScalars:
     def test_string(self, cfg):
@@ -59,10 +64,13 @@ class TestScalars:
         roundtrip({"n": None}, cfg)
 
     def test_multiple_scalars(self, cfg):
-        roundtrip({"name": "adam", "age": 30, "score": 9.5, "active": True, "note": None}, cfg)
+        roundtrip(
+            {"name": "adam", "age": 30, "score": 9.5, "active": True, "note": None}, cfg
+        )
 
 
 # ── Lists ─────────────────────────────────────────────────────────────────────
+
 
 class TestLists:
     def test_string_list(self, cfg):
@@ -92,6 +100,7 @@ class TestLists:
 
 # ── Nested objects ────────────────────────────────────────────────────────────
 
+
 class TestNestedObjects:
     def test_shallow_nested(self, cfg):
         roundtrip({"address": {"city": "London", "zip": "EC1A"}}, cfg)
@@ -100,43 +109,53 @@ class TestNestedObjects:
         roundtrip({"a": {"b": {"c": {"d": "deep"}}}}, cfg)
 
     def test_nested_with_list(self, cfg):
-        roundtrip({
-            "hobbies": {
-                "sports": ["cycling", "swimming", "basketball"],
-                "other": "chess"
-            }
-        }, cfg)
+        roundtrip(
+            {
+                "hobbies": {
+                    "sports": ["cycling", "swimming", "basketball"],
+                    "other": "chess",
+                }
+            },
+            cfg,
+        )
 
     def test_nested_with_all_types(self, cfg):
-        roundtrip({
-            "meta": {
-                "count": 3,
-                "ratio": 0.75,
-                "enabled": True,
-                "label": None,
-                "tags": ["a", "b"],
-            }
-        }, cfg)
+        roundtrip(
+            {
+                "meta": {
+                    "count": 3,
+                    "ratio": 0.75,
+                    "enabled": True,
+                    "label": None,
+                    "tags": ["a", "b"],
+                }
+            },
+            cfg,
+        )
 
     def test_empty_nested_object(self, cfg):
         roundtrip({"empty": {}}, cfg)
 
     def test_full_complex_object(self, cfg):
-        roundtrip({
-            "name": "adam",
-            "age": 30,
-            "hobbies": {
-                "sports": ["cycling", "swimming", "basketball"],
-                "other": "chess"
+        roundtrip(
+            {
+                "name": "adam",
+                "age": 30,
+                "hobbies": {
+                    "sports": ["cycling", "swimming", "basketball"],
+                    "other": "chess",
+                },
+                "address": {"city": "London", "zip": "EC1A"},
+                "active": True,
+                "score": 9.5,
+                "nickname": None,
             },
-            "address": {"city": "London", "zip": "EC1A"},
-            "active": True,
-            "score": 9.5,
-            "nickname": None,
-        }, cfg)
+            cfg,
+        )
 
 
 # ── Escape handling ───────────────────────────────────────────────────────────
+
 
 class TestEscaping:
     def test_equals_in_value(self, cfg):
@@ -170,29 +189,31 @@ class TestEscaping:
 
 # ── Custom config ─────────────────────────────────────────────────────────────
 
+
 class TestCustomConfig:
     def test_custom_field_sep(self):
-        cfg = hp.FormatConfig(field_sep='&')
+        cfg = hp.FormatConfig(field_sep="&")
         roundtrip({"a": 1, "b": 2}, cfg)
 
     def test_custom_kv_sep(self):
-        cfg = hp.FormatConfig(kv_sep=':')
+        cfg = hp.FormatConfig(kv_sep=":")
         roundtrip({"key": "val"}, cfg)
 
     def test_custom_list_sep(self):
-        cfg = hp.FormatConfig(list_sep=',')
+        cfg = hp.FormatConfig(list_sep=",")
         roundtrip({"items": ["x", "y", "z"]}, cfg)
 
     def test_fully_custom(self):
         cfg = hp.FormatConfig(
-            field_sep='&', kv_sep=':', list_open='(', list_close=')',
-            list_sep=',', obj_open='<', obj_close='>'
+            field_sep="&",
+            kv_sep=":",
+            list_open="(",
+            list_close=")",
+            list_sep=",",
+            obj_open="<",
+            obj_close=">",
         )
-        roundtrip({
-            "name": "adam",
-            "tags": ["a", "b"],
-            "meta": {"x": 1}
-        }, cfg)
+        roundtrip({"name": "adam", "tags": ["a", "b"], "meta": {"x": 1}}, cfg)
 
     def test_custom_null(self):
         cfg = hp.FormatConfig(null_str="nil")
@@ -208,6 +229,7 @@ class TestCustomConfig:
 
 
 # ── Type coercion on loads ────────────────────────────────────────────────────
+
 
 class TestTypeCoercion:
     def test_int_coercion(self, cfg):
@@ -246,6 +268,7 @@ class TestTypeCoercion:
 
 # ── Error handling ────────────────────────────────────────────────────────────
 
+
 class TestErrors:
     def test_loads_wrong_type(self, cfg):
         with pytest.raises(TypeError):
@@ -266,6 +289,7 @@ class TestErrors:
 
 # ── CSV embedding ─────────────────────────────────────────────────────────────
 
+
 class TestCSVEmbedding:
     def test_no_comma_in_output(self, cfg):
         """Default format should never produce bare commas — safe for CSV."""
@@ -280,6 +304,7 @@ class TestCSVEmbedding:
 
     def test_roundtrip_via_csv_string(self, cfg):
         import io, csv
+
         data = {"env": "prod", "tags": ["web", "nginx"], "tier": 1}
         row = {"vm": "web-01", "meta": hp.dumps(data, cfg)}
 
@@ -297,19 +322,40 @@ class TestCSVEmbedding:
             assert result == data
 
 
+# ── Configuration Tests ───────────────────────────────────────────────────────
+
+
+class TestConfigValidation:
+    def test_duplicate_delimiters(self):
+        with pytest.raises(ValueError, match="Delimiter conflict"):
+            hp.FormatConfig(field_sep=";", kv_sep=";")
+
+    def test_null_str_contains_delimiter(self):
+        with pytest.raises(ValueError, match="null_str"):
+            hp.FormatConfig(null_str="nu;ll")
+
+    def test_all_same_delimiter(self):
+        with pytest.raises(ValueError, match="Delimiter conflict"):
+            hp.FormatConfig(field_sep="x", kv_sep="x")
+
+
 # ── VMware notes simulation ───────────────────────────────────────────────────
+
 
 class TestVMwareNotesSimulation:
     def test_typical_vm_metadata(self, cfg):
-        roundtrip({
-            "env": "prod",
-            "owner": "platform-team",
-            "tier": 1,
-            "tags": ["web", "nginx", "lb"],
-            "monitoring": {"enabled": True, "interval": 60},
-            "cost_center": "CC-1042",
-            "last_patched": "2026-03-01",
-        }, cfg)
+        roundtrip(
+            {
+                "env": "prod",
+                "owner": "platform-team",
+                "tier": 1,
+                "tags": ["web", "nginx", "lb"],
+                "monitoring": {"enabled": True, "interval": 60},
+                "cost_center": "CC-1042",
+                "last_patched": "2026-03-01",
+            },
+            cfg,
+        )
 
     def test_update_single_field(self, cfg):
         meta = {"env": "staging", "owner": "devs", "tier": 2}
