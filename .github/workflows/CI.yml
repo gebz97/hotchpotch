@@ -46,7 +46,7 @@ jobs:
       - name: Run tests
         run: |
           source .venv/bin/activate
-          pytest test_hotchpotch.py -v
+          pytest tests/test_hotchpotch.py -v
 
   linux:
     needs: [test]
