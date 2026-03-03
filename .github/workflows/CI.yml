@@ -1,4 +1,4 @@
-name: CI
+name: Main Pipeline
 
 on:
   push:
@@ -34,12 +34,19 @@ jobs:
             target/
           key: cargo-test-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: cargo-test-
+      - name: Create virtualenv
+        run: python -m venv .venv
       - name: Install maturin and pytest
-        run: pip install maturin pytest
+        run: |
+          .venv/bin/pip install maturin pytest
       - name: Build and install
-        run: maturin develop
+        run: |
+          source .venv/bin/activate
+          maturin develop
       - name: Run tests
-        run: pytest tests/test_hotchpotch.py -v
+        run: |
+          source .venv/bin/activate
+          pytest test_hotchpotch.py -v
 
   linux:
     needs: [test]
