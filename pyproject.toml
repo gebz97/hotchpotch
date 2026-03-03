@@ -1,0 +1,27 @@
+[build-system]
+requires = ["maturin>=1.12,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "hotchpotch"
+requires-python = ">=3.8"
+keywords = ["csv", "serialization", "parser", "rust", "pyo3"]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: General",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dynamic = ["version"]
+description = "Fast Rust-powered serialization format for embedding Python objects in CSV fields"
+readme = "README.md"
+license = "MIT"
+
+[project.urls]
+Homepage = "https://github.com/gebz97/hotchpotch"
+Repository = "https://github.com/gebz97/hotchpotch"
+Issues = "https://github.com/gebz97/hotchpotch/issues"
