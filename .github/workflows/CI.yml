@@ -3,8 +3,7 @@ name: Main Pipeline
 on:
   push:
     branches:
-      - main
-      - master
+      - release
     tags:
       - '*'
   pull_request:

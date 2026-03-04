@@ -5,6 +5,9 @@ build-backend = "maturin"
 [project]
 name = "hotchpotch"
 requires-python = ">=3.8"
+authors = [
+    {name = "gebz97", email = "gebz97@proton.me"}
+]
 keywords = ["csv", "serialization", "parser", "rust", "pyo3"]
 classifiers = [
     "Development Status :: 3 - Alpha",
