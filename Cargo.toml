@@ -1,8 +1,9 @@
 [package]
 name = "hotchpotch"
-version = "0.1.7"
+version = "0.1.8"
 edition = "2024"
 license = "MIT"
+authors = ["gebz97 <gebz97@proton.me>"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
