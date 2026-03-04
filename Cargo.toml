@@ -1,6 +1,6 @@
 [package]
 name = "hotchpotch"
-version = "0.1.8"
+version = "0.2.0"
 edition = "2024"
 license = "MIT"
 authors = ["gebz97 <gebz97@proton.me>"]

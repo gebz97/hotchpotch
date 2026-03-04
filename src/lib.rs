@@ -25,6 +25,7 @@ fn py_to_value(obj: &Bound<'_, PyAny>) -> PyResult<Value> {
     } else if obj.is_instance_of::<PyString>() {
         Ok(Value::Str(obj.extract::<String>()?))
     } else if obj.is_instance_of::<PyList>() {
+        // downcast is correct here — we already confirmed the type above
         let list = obj.cast::<PyList>()?;
         let items: PyResult<Vec<Value>> = list.iter().map(|x| py_to_value(&x)).collect();
         Ok(Value::List(items?))
@@ -63,6 +64,7 @@ fn value_to_py<'py>(val: &Value, py: Python<'py>) -> PyResult<Bound<'py, PyAny>>
             }
             Ok(list.into_any())
         }
+
         Value::Object(map) => {
             let dict = PyDict::new(py);
             for (k, v) in map {
@@ -80,7 +82,7 @@ fn value_to_py<'py>(val: &Value, py: Python<'py>) -> PyResult<Bound<'py, PyAny>>
 /// Example:
 ///     cfg = FormatConfig()
 ///     dumps({"name": "adam", "hobbies": ["cycling", "rowing"], "age": 30}, cfg)
-///     # → "name=adam;hobbies=[cycling|rowing];age=30;"
+///     # → "age=30;hobbies=[cycling|rowing];name=adam;"
 #[pyfunction]
 #[pyo3(signature = (obj, config=None))]
 fn dumps(obj: &Bound<'_, PyDict>, config: Option<&FormatConfig>) -> PyResult<String> {
